@@ -1,0 +1,11 @@
+node_modules/
+target/
+
+# Gatling run results
+results/
+
+.DS_Store
+*.log
+
+.env
+
