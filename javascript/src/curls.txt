@@ -1,0 +1,9 @@
+curl -X POST http://localhost:3001/project -H "Content-Type: application/json" -d \
+'{
+  "username": "testuser1",
+  "name": "projectTest",
+  "description": "projectTest description"
+}'
+
+
+curl -X POST http://localhost:3001/user/signin -H "Content-Type: application/json" -d '{"email": "testuser@example.com", "password": "SecurePassword123"}'
