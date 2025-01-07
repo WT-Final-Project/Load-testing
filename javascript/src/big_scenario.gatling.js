@@ -1,4 +1,4 @@
-import { simulation, scenario, StringBody, constantUsersPerSec, jsonPath, atOnceUsers, pause } from "@gatling.io/core";
+import { simulation, scenario, StringBody, jsonPath, atOnceUsers, pause, constantUsersPerSec, rampUsersPerSec } from "@gatling.io/core";
 import { http, status } from "@gatling.io/http";
 
 const randomProjectName = () => `project_${Math.floor(Math.random() * 1000000)}`;
@@ -70,7 +70,6 @@ export default simulation((setUp) => {
 
   setUp(
     userSession.injectOpen(
-      atOnceUsers(1) // Cambia el número de usuarios según lo necesites
-    )
+      rampUsersPerSec(2).to(5).during(20)    )    
   ).protocols(httpProtocol);
 });
