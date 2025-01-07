@@ -1,5 +1,11 @@
-import { simulation, scenario, constantUsersPerSec, atOnceUsers } from "@gatling.io/core";
+import { simulation, scenario, atOnceUsers } from "@gatling.io/core";
 import { http, status, RawFileBodyPart } from "@gatling.io/http";
+
+// Crear función generadora de números
+const numberGenerator = (() => {
+  let number = 1;
+  return () => number++;
+})();
 
 export default simulation((setUp) => {
   // Configuración del protocolo HTTP
@@ -7,22 +13,26 @@ export default simulation((setUp) => {
     .baseUrl("http://localhost:3001") // Cambia la URL según tu entorno
     .acceptHeader("application/json");
 
-  // Escenario para subir un archivo
-  const uploadFileScenario = scenario("File Upload Scenario")
+  // Crear un escenario que recorra todos los archivos
+  const uploadFileScenario = scenario("Dynamic File Upload Scenario")
+    .exec((session) => {
+      const fileName = `example copy ${numberGenerator()}.txt`;
+      return session.set("fileName", fileName); // Agregar el nombre del archivo a la sesión
+    })
     .exec(
       http("Upload File")
         .post("/file") // Ruta del backend
         .bodyPart(
-          RawFileBodyPart("fileContent", "./src/data/example.txt")
-            .fileName("example.txt")
+          RawFileBodyPart("fileContent", (session) => `./src/data/${session.get("fileName")}`)
+            .fileName((session) => session.get("fileName"))
             .contentType("text/plain")
-        ) // Uso correcto de RawFileBodyPart
+        )
         .formParam("taskId", "2833") // Task ID fijo
-        .check(status().is(201)) // Comprobar que el estado de la respuesta sea 200
+        .check(status().is(201)) // Comprobar que el estado de la respuesta sea 201
     );
 
   // Configuración de la simulación
   setUp(
-    uploadFileScenario.injectOpen(atOnceUsers(1)) // Subir un archivo por segundo durante 10 segundos
+    uploadFileScenario.injectOpen(atOnceUsers(2)) // Ejecutar 2 usuarios al mismo tiempo
   ).protocols(httpProtocol);
 });
