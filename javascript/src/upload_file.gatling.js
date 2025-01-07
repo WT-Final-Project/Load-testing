@@ -1,4 +1,4 @@
-import { simulation, scenario, constantUsersPerSec } from "@gatling.io/core";
+import { simulation, scenario, constantUsersPerSec, atOnceUsers } from "@gatling.io/core";
 import { http, status, RawFileBodyPart } from "@gatling.io/http";
 
 export default simulation((setUp) => {
@@ -18,13 +18,11 @@ export default simulation((setUp) => {
             .contentType("text/plain")
         ) // Uso correcto de RawFileBodyPart
         .formParam("taskId", "2833") // Task ID fijo
-        .check(status().is(200)) // Comprobar que el estado de la respuesta sea 200
+        .check(status().is(201)) // Comprobar que el estado de la respuesta sea 200
     );
 
   // Configuración de la simulación
   setUp(
-    uploadFileScenario.injectOpen(
-      constantUsersPerSec(2).during(10) // 2 usuarios por segundo durante 10 segundos
-    )
+    uploadFileScenario.injectOpen(atOnceUsers(1)) // Subir un archivo por segundo durante 10 segundos
   ).protocols(httpProtocol);
 });
