@@ -14,7 +14,7 @@ curl -X POST http://localhost:3001/user/signup -H "Content-Type: application/jso
 
 
 curl -X POST http://localhost:3001/task -H "Content-Type: application/json" -d '{
-  "projectId": 2444,
+  "projectId": 2,
   "username": "testuser1",
   "title": "Task Example",
   "description": "This is a sample task",

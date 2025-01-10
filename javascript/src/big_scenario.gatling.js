@@ -70,6 +70,6 @@ export default simulation((setUp) => {
 
   setUp(
     userSession.injectOpen(
-      rampUsersPerSec(2).to(5).during(20)    )    
+      rampUsersPerSec(5).to(10).during(30)    )    
   ).protocols(httpProtocol);
 });

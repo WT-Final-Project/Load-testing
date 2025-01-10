@@ -1,4 +1,4 @@
-import { simulation, scenario, atOnceUsers } from "@gatling.io/core";
+import { simulation, scenario, atOnceUsers, rampUsersPerSec } from "@gatling.io/core";
 import { http, status, RawFileBodyPart } from "@gatling.io/http";
 
 // Crear función generadora de números
@@ -27,12 +27,13 @@ export default simulation((setUp) => {
             .fileName((session) => session.get("fileName"))
             .contentType("text/plain")
         )
-        .formParam("taskId", "2833") // Task ID fijo
+        .formParam("taskId", "2") // Task ID fijo
         .check(status().is(201)) // Comprobar que el estado de la respuesta sea 201
     );
 
   // Configuración de la simulación
   setUp(
-    uploadFileScenario.injectOpen(atOnceUsers(2)) // Ejecutar 2 usuarios al mismo tiempo
+    uploadFileScenario.injectOpen(
+      rampUsersPerSec(2).to(20).during(40)    )    
   ).protocols(httpProtocol);
 });
